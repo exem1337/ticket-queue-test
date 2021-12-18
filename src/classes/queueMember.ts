@@ -1,10 +1,10 @@
 import ticketType from "./ticketType";
 
 export default class queueMember {
-    constructor(memberTicket :ticketType, id :number, key :string, deployTime :Date) {}
+  constructor(
+    memberTicket: ticketType,
+    id: number,
+    key: string,
+    deployTime: Date
+  ) {}
 }
-
-interface IqueueMember {
-    memberTicket :ticketType, id :number, key :string, deployTime :Date
-}
-

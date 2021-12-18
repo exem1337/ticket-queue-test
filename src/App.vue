@@ -1,131 +1,60 @@
 <template>
   <header-nav />
-  <main-page v-show="store.state.currentPage === 1" />
-  <queue-sign v-if="store.state.currentPage === 2" />
-  <types-editor v-if="store.state.currentPage === 3" />
-  <invite-modal v-if="store.state.needModal" />
-
+  <transition name="fade">
+    <invite-modal v-if="store.state.needModal" />
+  </transition>
+  <router-view></router-view>
 </template>
 
 <script lang="ts">
-import { key } from '@/store'
-import MainPage from './views/main-page.vue'
-import headerNav from './components/header-nav.vue'
-import typesEditor from './views/typesEditor.vue'
-import queueSign from './views/queue-sign.vue'
-import { defineComponent, onMounted } from 'vue'
-import { useStore } from 'vuex'
-import inviteModal from '@/components/inviteModal.vue';
-import ticketType from './classes/ticketType'
-import queueMember from './classes/queueMember'
-import queueHandler from './classes/queueHandler'
-import modal from 'vue-js-modal'
+import { key } from "@/store";
+import headerNav from "./components/header-nav.vue";
+import { defineComponent, onMounted } from "vue";
+import { useStore } from "vuex";
+import inviteModal from "@/components/inviteModal.vue";
+import queueHandler from "./classes/queueHandler";
+import modal from "vue-js-modal";
 export default defineComponent({
-  components : { MainPage, headerNav, typesEditor, queueSign, inviteModal, modal },
+  components: {
+    headerNav,
+    inviteModal,
+    modal,
+  },
   setup() {
-    const store = useStore(key)
-
-    const updateTypesLocalStorage = () => {
-        localStorage.setItem('ticketTypes', JSON.stringify(store.state.typesArray))
-    }
-
-    const generateMock = () => {
-      if(localStorage.getItem('ticketTypes') == null || localStorage.getItem('ticketTypes') == '[]') { //если нет типов талонов
-        const ticketTypesMock :ticketType[] =
-        [
-          {
-            key: 1, typeName: 'Оплата госпошлины'
-          },
-          {
-            key: 2, typeName: 'Замена паспорта'
-          },
-          {
-            key: 3, typeName: 'Открытие ИП'
-          },
-          {
-            key: 4, typeName: 'Расторжение договора'
-          },
-          {
-            key: 5, typeName: 'Прочие вопросы'
-          },
-        ]
-        ticketTypesMock.forEach(el => {
-          store.commit('CREATE_TICKET_TYPE', el)
-        })
-        updateTypesLocalStorage()
-      }
-      if(localStorage.getItem('queueMembers') == null || localStorage.getItem('queueMembers') == '[]') { //если нет очереди
-        const time = new Date(Date.now())
-        time.setMinutes(10)
-
-        const queueMembersMock :queueMember[] = [
-          {
-            memberTicket: { key: 1, typeName: 'Оплата госпошлины' } as ticketType,
-            id: 1,
-            key: 'A0F',
-            deployTime: new Date(1339757716030)
-          },
-          {
-            memberTicket: { key: 2, typeName: 'Замена паспорта' } as ticketType,
-            id: 2,
-            key: 'FAD',
-            deployTime: new Date(1839757716030)
-          },
-          {
-            memberTicket: { key: 3, typeName: 'Открытие ИП' } as ticketType,
-            id: 3,
-            key: 'TY3',
-            deployTime: new Date(1839757716030)
-          },
-          {
-            memberTicket: { key: 4, typeName: 'Расторжение договора' } as ticketType,
-            id: 4,
-            key: 'HNY',
-            deployTime: new Date(1839757716030)
-          },
-          {
-            memberTicket: { key: 5, typeName: 'Прочие вопросы' } as ticketType,
-            id: 5,
-            key: '6OP',
-            deployTime: new Date(1839757716030)
-          }
-        ]
-        store.commit('UPDATE_MEMBERS', queueMembersMock)
-        localStorage.setItem('queueMembers', JSON.stringify(store.state.queueMembers))
-      }
-    }
+    const store = useStore(key);
 
     onMounted(() => {
-      // if(localStorage.getItem('ticketTypes') == null || localStorage.getItem('ticketTypes') == '[]' || localStorage.getItem('queueMembers') == null || localStorage.getItem('queueMembers') == '[]') {
-      //   generateMock()
-      // }
-      store.commit('GET_QUEUE_MEMBERS') //забираем данные из localstorage
-      store.commit('GET_TICKET_TYPES')
+      store.commit("GET_QUEUE_MEMBERS"); //забираем данные из localstorage
+      store.commit("GET_TICKET_TYPES");
+      const qh = new queueHandler();
+      qh.queueInit();
+    });
 
-      const qh = new queueHandler()
-
-      qh.queueInit()
-    })
-
-
-
-    return { store }
-  }
-})
+    return { store };
+  },
+});
 </script>
 
 <style lang="scss">
 #app {
   position: relative;
 }
-
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
+}
 .shadow {
-  -webkit-box-shadow: 5px 8px 30px -6px rgba(0,0,0,0.28);
-  -moz-box-shadow: 5px 8px 30px -6px rgba(0,0,0,0.28);
-  box-shadow: 5px 8px 30px -6px rgba(0,0,0,0.28);
+  -webkit-box-shadow: 5px 8px 30px -6px rgba(0, 0, 0, 0.28);
+  -moz-box-shadow: 5px 8px 30px -6px rgba(0, 0, 0, 0.28);
+  box-shadow: 5px 8px 30px -6px rgba(0, 0, 0, 0.28);
 }
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -155,10 +84,7 @@ export default defineComponent({
   //background: hsl(0deg 0% 0% / 0.25);
   will-change: transform;
   transform: translateY(2px);
-  transition:
-    transform
-    600ms
-    cubic-bezier(.3, .7, .4, 1);
+  transition: transform 600ms cubic-bezier(0.3, 0.7, 0.4, 1);
 }
 
 .button-edge {
@@ -180,10 +106,7 @@ export default defineComponent({
   background-color: #f57c00;
   will-change: transform;
   transform: translateY(-4px);
-  transition:
-    transform
-    600ms
-    cubic-bezier(.3, .7, .4, 1);
+  transition: transform 600ms cubic-bezier(0.3, 0.7, 0.4, 1);
 }
 
 @media (min-width: 768px) {
@@ -203,10 +126,7 @@ export default defineComponent({
 
 .button-pushable:hover .button-front {
   transform: translateY(-6px);
-  transition:
-    transform
-    250ms
-    cubic-bezier(.3, .7, .4, 1.5);
+  transition: transform 250ms cubic-bezier(0.3, 0.7, 0.4, 1.5);
 }
 
 .button-pushable:active .button-front {
@@ -216,10 +136,7 @@ export default defineComponent({
 
 .button-pushable:hover .button-shadow {
   transform: translateY(4px);
-  transition:
-    transform
-    250ms
-    cubic-bezier(.3, .7, .4, 1.5);
+  transition: transform 250ms cubic-bezier(0.3, 0.7, 0.4, 1.5);
 }
 
 .button-pushable:active .button-shadow {
@@ -231,11 +148,10 @@ export default defineComponent({
   outline: none;
 }
 
-.select{
+.select {
   padding: 10px 10px;
   margin: 5px 10px;
   font-size: 1.25em;
-
 }
 
 #app {
@@ -244,7 +160,7 @@ export default defineComponent({
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  font-family: 'Open Sans', sans-serif;
+  font-family: "Open Sans", sans-serif;
 }
 
 .container {
