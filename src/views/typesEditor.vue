@@ -10,7 +10,7 @@
             </div>
         </div>
         <form class="editor-form" @submit.prevent="createType">
-            <input type="text" placeholder="Название типа талона..." class="select" v-model="newTicketType">
+            <input :maxlength="20" type="text" placeholder="Название типа талона..." class="select" v-model="newTicketType">
             <button type="submit" class="button-pushable queue" :disabled="newTypeInputNotEmpty" role="button">
                 <span class="button-shadow"></span>
                 <span class="button-edge"></span>
@@ -35,7 +35,7 @@
             <p v-else>Типов талонов нет. Добавьте их, для работы с очередью</p>
         </div>
     </div>
-    <div class="edit-wrapper" v-if="editingType !== null" @click="modalClick">
+    <div class="edit-wrapper" v-if="editingType !== null">
         <edit-type-modal :type="editingType"
             @closeModal="closeModal"
         />

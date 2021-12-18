@@ -36,7 +36,6 @@ export default defineComponent({
     components: { queueMemberItem },
     setup() {
         const store = useStore(key)
-        let membersArray :queueMember[] = store.state.queueMembers;
 
         const clearQueue = () => {
           store.commit('CLEAR_QUEUE')
@@ -44,7 +43,6 @@ export default defineComponent({
 
         return {
           store,
-          membersArray,
           clearQueue,
         }
     }

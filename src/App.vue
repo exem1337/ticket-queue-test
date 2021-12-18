@@ -4,6 +4,7 @@
   <queue-sign v-if="store.state.currentPage === 2" />
   <types-editor v-if="store.state.currentPage === 3" />
   <invite-modal v-if="store.state.needModal" />
+
 </template>
 
 <script lang="ts">
@@ -17,8 +18,10 @@ import { useStore } from 'vuex'
 import inviteModal from '@/components/inviteModal.vue';
 import ticketType from './classes/ticketType'
 import queueMember from './classes/queueMember'
+import queueHandler from './classes/queueHandler'
+import modal from 'vue-js-modal'
 export default defineComponent({
-  components : { MainPage, headerNav, typesEditor, queueSign, inviteModal },
+  components : { MainPage, headerNav, typesEditor, queueSign, inviteModal, modal },
   setup() {
     const store = useStore(key)
 
@@ -52,31 +55,39 @@ export default defineComponent({
         updateTypesLocalStorage()
       }
       if(localStorage.getItem('queueMembers') == null || localStorage.getItem('queueMembers') == '[]') { //если нет очереди
+        const time = new Date(Date.now())
+        time.setMinutes(10)
+
         const queueMembersMock :queueMember[] = [
           {
             memberTicket: { key: 1, typeName: 'Оплата госпошлины' } as ticketType,
             id: 1,
-            key: 'A0F'
+            key: 'A0F',
+            deployTime: new Date(1339757716030)
           },
           {
             memberTicket: { key: 2, typeName: 'Замена паспорта' } as ticketType,
             id: 2,
-            key: 'FAD'
+            key: 'FAD',
+            deployTime: new Date(1839757716030)
           },
           {
             memberTicket: { key: 3, typeName: 'Открытие ИП' } as ticketType,
             id: 3,
-            key: 'TY3'
+            key: 'TY3',
+            deployTime: new Date(1839757716030)
           },
           {
             memberTicket: { key: 4, typeName: 'Расторжение договора' } as ticketType,
             id: 4,
-            key: 'HNY'
+            key: 'HNY',
+            deployTime: new Date(1839757716030)
           },
           {
             memberTicket: { key: 5, typeName: 'Прочие вопросы' } as ticketType,
             id: 5,
-            key: '6OP'
+            key: '6OP',
+            deployTime: new Date(1839757716030)
           }
         ]
         store.commit('UPDATE_MEMBERS', queueMembersMock)
@@ -85,11 +96,15 @@ export default defineComponent({
     }
 
     onMounted(() => {
-      if(localStorage.getItem('ticketTypes') == null || localStorage.getItem('ticketTypes') == '[]' || localStorage.getItem('queueMembers') == null || localStorage.getItem('queueMembers') == '[]') {
-        generateMock()
-      }
+      // if(localStorage.getItem('ticketTypes') == null || localStorage.getItem('ticketTypes') == '[]' || localStorage.getItem('queueMembers') == null || localStorage.getItem('queueMembers') == '[]') {
+      //   generateMock()
+      // }
       store.commit('GET_QUEUE_MEMBERS') //забираем данные из localstorage
       store.commit('GET_TICKET_TYPES')
+
+      const qh = new queueHandler()
+
+      qh.queueInit()
     })
 
 

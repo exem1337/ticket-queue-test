@@ -5,6 +5,7 @@
         <p>Тип талона: {{ member.memberTicket.typeName }}</p>
         <p>ID талона: {{member.id}}</p>
         <p class="queueNumber">Номер в очереди: {{queueIndex + 1}}</p>
+        <p>Время выхода из очереди: {{ member.deployTime }}</p>
         <i class="material-icons cardIcon">supervisor_account</i>
     </div>
 </template>
@@ -23,31 +24,31 @@ export default defineComponent({
         const store = useStore(key)
         let timeModifier: number = store.state.queueSpeed;
 
-        const indexchanged = () => {
-            if(props.queueIndex === 0) {
-                store.state.modalTimeouts.push(setTimeout(() => {
-                    store.state.needModal = true //показываем модалку
-                    setTimeout(() => {
-                        store.state.needModal = false
-                        store.commit('REMOVE_FROM_QUEUE') //удаляем из очереди
-                    }, 5000);
-                }, timeModifier))
-            }
-        }
+        // const indexchanged = () => {
+        //     if(props.queueIndex === 0) {
+        //         store.state.modalTimeouts.push(setTimeout(() => {
+        //             store.state.needModal = true //показываем модалку
+        //             setTimeout(() => {
+        //                 store.state.needModal = false
+        //                 store.commit('REMOVE_FROM_QUEUE') //удаляем из очереди
+        //             }, 5000);
+        //         }, timeModifier))
+        //     }
+        // }
 
-        watch(props, indexchanged)
+        // watch(props, indexchanged)
 
-        onMounted(() => {
-            if(props.queueIndex === 0){ //первому в очереди дается в 10 раз меньше времени
-                store.state.modalTimeouts.push(setTimeout(() => {
-                    store.state.needModal = true //вызываем модальное окно с приглашением
-                    setTimeout(() => {
-                        store.state.needModal = false //убираем модалку и удаляем элемент из очереди
-                        store.commit('REMOVE_FROM_QUEUE')
-                    }, 5000);
-                }, timeModifier/10))
-            }
-        })
+        // onMounted(() => {
+        //     if(props.queueIndex === 0){ //первому в очереди дается в 10 раз меньше времени
+        //         store.state.modalTimeouts.push(setTimeout(() => {
+        //             store.state.needModal = true //вызываем модальное окно с приглашением
+        //             setTimeout(() => {
+        //                 store.state.needModal = false //убираем модалку и удаляем элемент из очереди
+        //                 store.commit('REMOVE_FROM_QUEUE')
+        //             }, 5000);
+        //         }, timeModifier/10))
+        //     }
+        // })
     },
 })
 </script>

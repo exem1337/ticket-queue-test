@@ -31,22 +31,21 @@ import ticketType from '../classes/ticketType'
 import { computed, defineComponent, Ref, ref } from 'vue'
 import { useStore } from 'vuex'
 import queueMember from '@/classes/queueMember'
+import queueHandler from '@/classes/queueHandler'
 export default defineComponent({
 setup() {
     const store = useStore(key)
     const selectedType = ref<ticketType>({ typeName: '', key: -1 })
     const ticketName :Ref<string> = ref('')
 
-    interface Member {
-        key: string,
-        id: number,
-        memberTicket :ticketType
+    interface IqueueMember {
+        memberTicket :ticketType, id :number, key :string, deployTime :Date
     }
 
     const searchInQueue = function(name :string) :Boolean {
-        const s :Member[] = store.state.queueMembers as Member[]
+        const s :IqueueMember[] = store.state.queueMembers as IqueueMember[]
         let result :boolean = false;
-        s.forEach(function(item : Member) {
+        s.forEach(function(item : IqueueMember) {
             if(item.key === name) { result = true }
         })
         return result
@@ -54,16 +53,17 @@ setup() {
 
     const signToQueue = () => {
         if(selectedType.value.key !== -1 && !searchInQueue(ticketName.value.toUpperCase())) {
-            store.commit('SIGN_TO_QUEUE', {
+            const qh = new queueHandler()
+            qh.addToQueue({
                 id: +Date.now(),
                 key: ticketName.value.toUpperCase(),
+                deployTime: qh.getNewMemberDeployTime(),
                 memberTicket: {
                     typeName: selectedType.value.typeName,
                     key: selectedType.value.key
-                    } as ticketType
-                } as queueMember
-            )
-            localStorage.setItem('queueMembers', JSON.stringify(store.state.queueMembers))
+                } as ticketType
+
+            } as IqueueMember)
             ticketName.value = ''
         }
         else alert('Выберите тип талона / такой номер уже есть в очереди')
@@ -77,7 +77,7 @@ setup() {
         return ticketName.value != '' ? false : true
     })
 
-    const nameKeydown = (e :any) => { //сорян за any
+    const nameKeydown = (e :KeyboardEvent) => {
       if (/^\W$/.test(e.key)) {
         e.preventDefault();
       }
