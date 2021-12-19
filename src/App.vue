@@ -8,7 +8,7 @@
 
 <script lang="ts">
 import { key } from "@/store";
-import headerNav from "./components/header-nav.vue";
+import headerNav from "./components/headerNav.vue";
 import { defineComponent, onMounted } from "vue";
 import { useStore } from "vuex";
 import inviteModal from "@/components/inviteModal.vue";

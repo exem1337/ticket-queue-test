@@ -108,7 +108,7 @@ export default defineComponent({
     };
 
     const newTypeInputNotEmpty = computed(() => {
-      return !newTicketType.value.length
+      return !newTicketType.value.length;
     });
 
     const deleteType = (type: ticketType) => {

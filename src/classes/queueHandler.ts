@@ -9,7 +9,7 @@ export default class queueHandler {
   // так же есть версия, работающая и на системном времени
   private url = "http://worldtimeapi.org/api/timezone/Asia/Yekaterinburg";
 
-   getRandomString(length: number): string {
+  getRandomString(length: number): string {
     var randomChars =
       "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     var result = "";

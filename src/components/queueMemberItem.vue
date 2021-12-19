@@ -5,27 +5,30 @@
     <p>Тип талона: {{ member.memberTicket.typeName }}</p>
     <p>ID талона: {{ member.id }}</p>
     <p class="queueNumber">Номер в очереди: {{ queueIndex + 1 }}</p>
-    <p>Время выхода из очереди: {{ member.deployTime.toString() }}</p>
+    <p>Время выхода из очереди: {{ date }}</p>
     <i class="material-icons cardIcon">supervisor_account</i>
   </div>
 </template>
 
 <script lang="ts">
-import  queueMember from "@/classes/queueMember";
+import IqueueMember from "@/classes/IqueueMember";
 import { defineComponent } from "vue";
 export default defineComponent({
   props: {
-    member: Object as () => queueMember,
+    member: { type: Object as () => IqueueMember, required: true },
     queueIndex: { type: Number, required: true },
   },
-  setup(props) {},
+  setup(props) {
+    const date = new Date(new Date(props.member.deployTime.toLocaleString("en-US", {timeZone: "Asia/Yekaterinburg"}))) //сбивалось визуальное отображение часового пояса, пришлось указать явно
+    return { date }
+  }
 });
 </script>
 
 <style lang="scss" scoped>
 .queue-member {
   position: relative;
-  min-width: 47%;
+  max-width: 47%;
   height: fit-content;
   padding: 50px;
   margin: 10px;

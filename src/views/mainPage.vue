@@ -98,7 +98,7 @@ p {
 
 @media screen and (max-width: 738px) {
   .queue-member {
-    min-width: 70%;
+    min-width: 90%;
     width: 100%;
   }
   .bottom-inner {

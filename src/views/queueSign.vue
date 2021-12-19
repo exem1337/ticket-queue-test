@@ -36,6 +36,7 @@ import { computed, defineComponent, Ref, ref } from "vue";
 import { useStore } from "vuex";
 import queueHandler from "@/classes/queueHandler";
 import IqueueMember from "@/classes/IqueueMember";
+import queueMember from "@/classes/queueMember";
 export default defineComponent({
   setup() {
     const store = useStore(key);
@@ -45,7 +46,8 @@ export default defineComponent({
     const signToQueue = () => {
       if (selectedType.value.key !== -1) {
         const qh = new queueHandler();
-        qh.addToQueue({
+
+        const newMember: queueMember = {
           id: +Date.now(),
           key: qh.getRandomString(3).toUpperCase(),
           deployTime: qh.getNewMemberDeployTime(),
@@ -53,7 +55,9 @@ export default defineComponent({
             typeName: selectedType.value.typeName,
             key: selectedType.value.key,
           } as ticketType,
-        } as IqueueMember);
+        };
+
+        qh.addToQueue(newMember as IqueueMember);
         ticketName.value = "";
       } else alert("Выберите тип талона");
     };
